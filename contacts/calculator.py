@@ -16,7 +16,6 @@ class Calculator:
         return self.num1 / self.num2
 
 
-
 if __name__ == '__main__':
     calc = Calculator(6, 2) # num1=6, num2=2
     sumResult = calc.sum()

@@ -88,9 +88,10 @@ class Service:
     
     @staticmethod
     def get_movie_url(url):
-        url = "http://movie.naver.com/movie/sdb/rank/rmovie.nhn"
+        # url = "http://movie.naver.com/movie/sdb/rank/rmovie.nhn"
         html = urllib.request.urlopen(url)
         soup = BeautifulSoup(html, 'html.parser')
+        # print('get movie url :'+url)
         return soup
 
     @staticmethod
@@ -114,31 +115,31 @@ class Service:
             title = ''
             up_down = '' # '상승/하강/불변'을 위한 설명 문구
 
-        mytd = one_tr.find('td', attrs={'class':'title'})
-        if(mytd != None):
-            no += 1
-            newno = str(no).zfill(2)
+            mytd = one_tr.find('td', attrs={'class':'title'})
+            if(mytd != None):
+                no += 1
+                newno = str(no).zfill(2)
 
-            mytag = mytd.find('div', attrs={'class':'tit3'})
+                mytag = mytd.find('div', attrs={'class':'tit3'})
 
-            # string 속성 : 해당 태그가 가지고 있는 문자열을 출력
-            title = mytag.a.string
+                # string 속성 : 해당 태그가 가지고 있는 문자열을 출력
+                title = mytag.a.string
 
-            # td 태그 중에서 3번째 요소를 찾기
-            mytd = one_tr.select_one('td:nth-of-type(3)')
-            myimg = mytd.find('img')
-            if myimg.attrs['alt'] == 'up' :
-                up_down = '상승'
-            elif myimg.attrs['alt'] == 'down' :
-                up_down = '하락'
-            else :
-                up_down = '불변'
+                # td 태그 중에서 3번째 요소를 찾기
+                mytd = one_tr.select_one('td:nth-of-type(3)')
+                myimg = mytd.find('img')
+                if myimg.attrs['alt'] == 'up' :
+                    up_down = '상승'
+                elif myimg.attrs['alt'] == 'down' :
+                    up_down = '하강'
+                else :
+                    up_down = '불변'
 
-            change = one_tr.find('td', attrs={'class':'range ac'})
-            change = change.string
+                change = one_tr.find('td', attrs={'class':'range ac'})
+                change = change.string
 
-            # print(newno + '/' + title + '/' + up_down + '/' + change)
-            totallist.append((newno, title, up_down, change))
+                # print(newno + '/' + title + '/' + up_down + '/' + change)
+                totallist.append((newno, title, up_down, change))
 
         mycolumn = ['순위', '제목', '변동', '변동값']
         myframe = DataFrame(totallist, columns=mycolumn)

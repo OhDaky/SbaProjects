@@ -7,6 +7,7 @@ from urllib.request import urlopen
 from pandas import DataFrame
 import pandas as pd
 from crawler.entity import Entity
+import urllib
 
 class Service:
     def __init__(self):
@@ -16,16 +17,18 @@ class Service:
         pass
 
     # url 을 받아서 soup 초기화
-    def get_url(self, url):
+    @staticmethod
+    def get_url(url):
         myparser = 'html.parser'
         response = urlopen(url)
-        self.soup = BeautifulSoup(response, myparser)
-        return self.soup
+        soup = BeautifulSoup(response, myparser)
+        return soup
 
     # 각 이미지를 요일별 폴더에
-    def save_webtoon_img(self, mysrc, myweekday, mytitle):
+    @staticmethod
+    def save_webtoon_img(mysrc, myweekday, mytitle):
         weekday_dict = {'mon':'월요일', 'tue':'화요일', 'wed':'수요일', 'thu':'목요일', 'fri':'금요일', 'sat':'토요일', 'sun':'일요일'}
-        myfolder = '/Users/odakyeong/SbaProjects/crawler/img'
+        myfolder = '/Users/odakyeong/webtoon/'
         image_file = urlopen(mysrc)
         filename = myfolder + weekday_dict[myweekday] + '/' + mytitle + '.jpg'
         myfile = open(filename, mode='wb')
@@ -48,9 +51,9 @@ class Service:
         except FileExistsError as err :
             print(err)
 
-
-    def save_webtoon_csv(self, url):
-        mytarget = Service.get_url.find_all('div', attrs={'class':'thumb'})
+    @staticmethod
+    def save_webtoon_csv(url):
+        mytarget = Service.get_url(url).find_all('div', attrs={'class':'thumb'})
         mylist = [] # 데이터를 저장할 리스트
         
         for abcd in mytarget:
@@ -83,13 +86,15 @@ class Service:
         myframe.to_csv(filename, encoding='utf-8', index=False)
         print(filename + ' 파일로 저장됨')
     
-    def get_movie_url(self, url):
+    @staticmethod
+    def get_movie_url(url):
         url = "http://movie.naver.com/movie/sdb/rank/rmovie.nhn"
         html = urllib.request.urlopen(url)
         soup = BeautifulSoup(html, 'html.parser')
         return soup
 
-    def get_movie_tags(self, url, url_header):
+    @staticmethod
+    def get_movie_tags(url, url_header):
         tags = Service.get_movie_url(url).findAll('div', attrs={'class':'tit3'})
     
         for tag in tags :
@@ -99,7 +104,8 @@ class Service:
         for tag in tags :
             print(url_header + tag.a['href'])
 
-    def save_movie_csv(self, url):
+    @staticmethod
+    def save_movie_csv(url):
         mytrs = Service.get_movie_url(url).find_all('tr')
         no = 0 # 순서를 의미하는 번호
         totallist = [] # 전체를 저장할 리스트
